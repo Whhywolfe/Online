@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>गेम हिस्ट्री - SATTA BAZAAR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Baloo 2', cursive;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      background: #fafafa;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-left: 5px solid #4CAF50;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>आपकी गेम हिस्ट्री</h2>
+    <ul id="historyList">
+      <li>लोड हो रहा है...</li>
+    </ul>
+  </div>
+
+  <script>
+    const userPhone = localStorage.getItem("phone");
+    const userData = JSON.parse(localStorage.getItem("user_" + userPhone));
+    const historyList = document.getElementById("historyList");
+
+    if (userData && userData.history && userData.history.length > 0) {
+      historyList.innerHTML = "";
+      userData.history.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.gameName} - नंबर: ${item.number} - ₹${item.amount}`;
+        historyList.appendChild(li);
+      });
+    } else {
+      historyList.innerHTML = "<li>कोई गेम हिस्ट्री नहीं मिली।</li>";
+    }
+  </script>
+</body>
+</html>
