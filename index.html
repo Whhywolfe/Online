@@ -179,6 +179,24 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   z-index: 9999;
 ">💬 WhatsApp</a>
+<script>
+window.onload = function () {
+  const results = JSON.parse(localStorage.getItem("gameResults")) || {};
 
+  const updateNumber = (gameName, value) => {
+    const cards = document.querySelectorAll(".game-card");
+    cards.forEach(card => {
+      const title = card.querySelector(".game-title")?.innerText?.toLowerCase();
+      if (title.includes(gameName.toLowerCase())) {
+        card.querySelector(".game-number").innerText = value + ' ';
+      }
+    });
+  };
+
+  if (results.gali) updateNumber("gali", results.gali);
+  if (results.disawar) updateNumber("desawar", results.disawar);
+  if (results.faridabad) updateNumber("faridabad", results.faridabad);
+};
+</script>
 </body>
 </html>
