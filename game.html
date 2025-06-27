@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Lagao - SATTA BAZAAR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Baloo 2', cursive;
+      background: #fffbea;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #ff5e00;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 12px 20px;
+      background: #ff5e00;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .back {
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="gameTitle">Game Lagao</h2>
+    <input type="text" id="number" placeholder="Number (0-999)">
+    <input type="number" id="amount" placeholder="Amount (₹)">
+    <button onclick="placeBet()">Lagao</button>
+    <a href="index.html" class="back">⬅️ वापिस होम</a>
+  </div>  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameName = urlParams.get('game') || 'Unknown';
+    document.getElementById("gameTitle").innerText = `🎯 ${gameName.toUpperCase()} Game`;
+
+    function placeBet() {
+      const number = document.getElementById("number").value.trim();
+      const amount = parseInt(document.getElementById("amount").value.trim());
+      const balance = parseInt(localStorage.getItem("balance") || 0);
+
+      if (!number || isNaN(amount) || amount <=
