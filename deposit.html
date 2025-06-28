@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>डिपॉज़िट</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input, button {
+      font-family: 'Baloo 2', cursive;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    button {
+      background: green;
+      color: white;
+      border: none;
+    }
+    .upi-box {
+      background: #e9e9e9;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>डिपॉज़िट फॉर्म</h2>
+    <div class="upi-box">
+      <p><strong>UPI ID:</strong> <span id="upiId">लोड हो रहा है...</span></p>
+      <p><strong>UPI नंबर:</strong> <span id="upiNumber">लोड हो रहा है...</span></p>
+    </div>
+    <input type="text" id="name" placeholder="नाम" required />
+    <input type="text" id="phone" placeholder="मोबाइल नंबर" required />
+    <input type="number" id="amount" placeholder="Amount ₹" required />
+    <input type="text" id="utr" placeholder="UTR / ट्रांजैक्शन ID" required />
+    <button onclick="submitDeposit()">सबमिट करें</button>
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
+      authDomain: "satta-bazaar.firebaseapp.com",
+      databaseURL: "https://satta-bazaar-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "satta-bazaar",
+      storageBucket: "satta-bazaar.firebasestorage.app",
+      messagingSenderId: "765288695039",
+      appId: "1:765288695039:web:4280573e9493f2dbd478ca",
+      measurementId: "G-DLS91L8Q7Z"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function loadUPIDetails() {
+      const upiRef = db.ref("upiDetails");
+      upiRef.on("value", (snapshot) => {
+        const data = snapshot.val();
+        document.getElementById("upiId").innerText = data?.id || "N/A";
+        document.getElementById("upiNumber").innerText = data?.number || "N/A";
+      });
+    }
+
+    function submitDeposit() {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const amount = Number(document.getElementById("amount").value.trim());
+      const utr = document.getElementById("utr").value.trim();
+
+      if (!name || !phone || !amount || !utr) {
+        document.getElementById("msg").innerText = "कृपया सभी फ़ील्ड भरें।";
+        return;
+      }
+
+      const depositData = {
+        name,
+        phone,
+        amount,
+        utr,
+        timestamp: Date.now()
+      };
+
+      db.ref("depositRequests").push(depositData)
+        .then(() => {
+          document.getElementById("msg").innerText = "✅ रिक्वेस्ट सफलतापूर्वक भेज दी गई!";
+          document.getElementById("name").value = "";
+          document.getElementById("phone").value = "";
+          document.getElementById("amount").value = "";
+          document.getElementById("utr").value = "";
+        })
+        .catch((error) => {
+          document.getElementById("msg").innerText = "❌ एरर: " + error.message;
+        });
+    }
+
+    loadUPIDetails();
+  </script>
+</body>
+</html>
