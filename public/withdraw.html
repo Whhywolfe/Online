@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>निकासी फॉर्म - SATTA BAZAAR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Baloo 2', cursive;
+      background-color: #f3f3f3;
+      padding: 20px;
+    }
+    .container {
+      max-width: 450px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #444;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #dc3545;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>निकासी फॉर्म</h2>
+    <input type="text" id="name" placeholder="नाम">
+    <input type="number" id="amount" placeholder="₹ अमाउंट">
+    <input type="text" id="bank" placeholder="बैंक का नाम">
+    <input type="text" id="account" placeholder="अकाउंट नंबर">
+    <input type="text" id="ifsc" placeholder="IFSC कोड">
+    <input type="text" id="utr" placeholder="UTR / ट्रांज़ैक्शन ID">
+    <button onclick="submitWithdraw()">रिक्वेस्ट भेजें</button>
+  </div>
+
+  <script>
+    function submitWithdraw() {
+      const name = document.getElementById("name").value;
+      const amount = parseInt(document.getElementById("amount").value);
+      const bank = document.getElementById("bank").value;
+      const account = document.getElementById("account").value;
+      const ifsc = document.getElementById("ifsc").value;
+      const utr = document.getElementById("utr").value;
+      const phone = localStorage.getItem("phone");
+
+      if (!name || !amount || !bank || !account || !ifsc || !utr) {
+        alert("सभी फ़ील्ड भरना ज़रूरी है");
+        return;
+      }
+
+      const withdrawData = { name, amount, bank, account, ifsc, utr, phone };
+      localStorage.setItem("withdraw_" + Date.now(), JSON.stringify(withdrawData));
+      alert("निकासी रिक्वेस्ट भेज दी गई है");
+      
+      // Optionally clear form
+      document.querySelectorAll("input").forEach(input => input.value = "");
+    }
+  </script>
+</body>
+</html>
