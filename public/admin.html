@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>एडमिन पैनल</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Rajdhani:wght@600&display=swap" rel="stylesheet"/>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: 'Baloo 2', cursive;
+      background: #f1f1f1;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h2, h3 {
+      font-family: 'Rajdhani', sans-serif;
+      color: #004d40;
+    }
+    input[type="text"], input[type="password"], input[type="number"] {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      margin: 10px auto;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      display: block;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 25px;
+      margin-top: 10px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+    #panel {
+      margin-top: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+    hr {
+      border: none;
+      border-top: 2px solid #ccc;
+      margin: 30px 0;
+    }
+    .request-box {
+      text-align: left;
+      background: #e0f7fa;
+      padding: 10px 15px;
+      margin: 10px auto;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>एडमिन लॉगिन</h2>
+  <input type="password" id="adminPass" placeholder="पासवर्ड">
+  <button onclick="login()">लॉगिन</button>
+
+  <div id="panel" style="display:none;">
+    <h3>💳 UPI ID और मोबाइल नंबर अपडेट करें</h3>
+    <input type="text" id="upiId" placeholder="UPI ID">
+    <input type="text" id="upiNum" placeholder="मोबाइल नंबर">
+    <button onclick="updateUPI()">UPI सेव करें</button>
+
+    <hr>
+
+    <h3>🔢 गेम नंबर अपडेट करें</h3>
+    <div id="gameNumberList">
+      <div>
+        <input type="text" placeholder="गेम का नाम (जैसे गली)" class="game-name" />
+        <input type="text" placeholder="नंबर (जैसे 23)" class="game-number" />
+      </div>
+    </div>
+    <button onclick="addGameInput()">➕ एक और गेम जोड़ें</button>
+    <button onclick="updateGameNumbers()">🟢 अपडेट करें</button>
+
+    <hr>
+
+    <h3>📥 डिपॉज़िट रिक्वेस्ट्स</h3>
+    <div id="depositRequests">लोड हो रहा है...</div>
+
+    <hr>
+
+    <h3>💸 निकासी रिक्वेस्ट्स</h3>
+    <div id="withdrawRequests">लोड हो रहा है...</div>
+
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
+      authDomain: "satta-bazaar.firebaseapp.com",
+      databaseURL: "https://satta-bazaar-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "satta-bazaar",
+      storageBucket: "satta-bazaar.appspot.com",
+      messagingSenderId: "765288695039",
+      appId: "1:765288695039:web:4280573e9493f2dbd478ca"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function login() {
+      const pass = document.getElementById("adminPass").value;
+      if (pass === "Vishal@4820") {
+        document.getElementById("panel").style.display = "block";
+        loadUPI();
+        loadDeposits();
+        loadWithdrawals();
+      } else {
+        alert("❌ गलत पासवर्ड");
+      }
+    }
+
+    function updateUPI() {
+      const upi = document.getElementById("upiId").value;
+      const number = document.getElementById("upiNum").value;
+      if (!upi || !number) {
+        alert("UPI ID और नंबर दोनों भरें");
+        return;
+      }
+      db.ref("upiDetails").set({ upi, number }).then(() => {
+        alert("✅ UPI जानकारी अपडेट हो गई");
+      }).catch((e) => {
+        alert("❌ सेव नहीं हो सकी");
+        console.error(e);
+      });
+    }
+
+    function loadUPI() {
+      db.ref("upiDetails").on("value", (snap) => {
+        const data = snap.val();
+        if (data) {
+          document.getElementById("upiId").value = data.upi || '';
+          document.getElementById("upiNum").value = data.number || '';
+        }
+      });
+    }
+
+    function addGameInput() {
+      const container = document.getElementById("gameNumberList");
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <input type="text" placeholder="गेम का नाम" class="game-name" />
+        <input type="text" placeholder="नंबर" class="game-number" />
+      `;
+      container.appendChild(div);
+    }
+
+    function updateGameNumbers() {
+      const names = document.querySelectorAll(".game-name");
+      const numbers = document.querySelectorAll(".game-number");
+
+      const result = {};
+      for (let i = 0; i < names.length; i++) {
+        const name = names[i].value.trim();
+        const num = numbers[i].value.trim();
+        if (name && num) result[name.toLowerCase()] = num;
+      }
+
+      if (Object.keys(result).length === 0) {
+        alert("कम से कम एक गेम डालें");
+        return;
+      }
+
+      db.ref("gameResults").set(result).then(() => {
+        alert("✅ गेम नंबर सेव हो गए");
+      }).catch(err => {
+        alert("❌ गेम नंबर सेव नहीं हुए");
+        console.error(err);
+      });
+    }
+
+    function loadDeposits() {
+      const container = document.getElementById("depositRequests");
+      db.ref("depositRequests").on("value", (snapshot) => {
+        const data = snapshot.val();
+        container.innerHTML = '';
+        if (data) {
+          Object.entries(data).forEach(([key, item]) => {
+            const div = document.createElement("div");
+            div.className = "request-box";
+            div.innerHTML = `
+              <strong>${item.name}</strong> ने ₹${item.amount} डिपॉज़िट किया<br>
+              फोन: ${item.phone}<br>
+              UTR: ${item.utr}<br>
+              <small>🕐 ${item.time || ''}</small><br>
+              <button onclick="approveDeposit('${key}', '${item.phone}', ${item.amount})">✅ Approve</button>
+            `;
+            container.appendChild(div);
+          });
+        } else {
+          container.innerHTML = "<i>कोई डिपॉज़िट रिक्वेस्ट नहीं है</i>";
+        }
+      });
+    }
+
+    function approveDeposit(key, phone, amount) {
+      const userKey = "user_" + phone;
+      const user = JSON.parse(localStorage.getItem(userKey)) || { balance: 0, history: [] };
+      user.balance += amount;
+      localStorage.setItem(userKey, JSON.stringify(user));
+
+      db.ref("depositRequests/" + key).remove().then(() => {
+        alert("✅ डिपॉज़िट अप्रूव हो गया");
+      });
+    }
+
+    function loadWithdrawals() {
+      const container = document.getElementById("withdrawRequests");
+      db.ref("withdrawRequests").on("value", (snapshot) => {
+        const data = snapshot.val();
+        container.innerHTML = '';
+        if (data) {
+          Object.entries(data).forEach(([key, item]) => {
+            const div = document.createElement("div");
+            div.className = "request-box";
+            div.innerHTML = `
+              <strong>${item.name}</strong> ने ₹${item.amount} निकालने का अनुरोध किया<br>
+              फोन: ${item.phone}<br>
+              बैंक: ${item.bank}<br>
+              अकाउंट: ${item.account}<br>
+              IFSC: ${item.ifsc}<br>
+              <small>🕐 ${item.time || ''}</small><br>
+              <button onclick="approveWithdraw('${key}', '${item.phone}', ${item.amount})">✅ Approve</button>
+            `;
+            container.appendChild(div);
+          });
+        } else {
+          container.innerHTML = "<i>कोई निकासी रिक्वेस्ट नहीं है</i>";
+        }
+      });
+    }
+
+    function approveWithdraw(key, phone, amount) {
+      const userKey = "user_" + phone;
+      const user = JSON.parse(localStorage.getItem(userKey)) || { balance: 0, history: [] };
+
+      if (user.balance < amount) {
+        alert("❌ इस यूज़र के पास पर्याप्त बैलेंस नहीं है");
+        return;
+      }
+
+      user.balance -= amount;
+      localStorage.setItem(userKey, JSON.stringify(user));
+
+      db.ref("withdrawRequests/" + key).remove().then(() => {
+        alert("✅ निकासी अप्रूव हो गई");
+      });
+    }
+  </script>
+</body>
+</html>
