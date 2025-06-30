@@ -114,7 +114,19 @@
   <a href="terms.html">📜 नियम व शर्तें</a>
   <a href="admin.html">🔐 एडमिन पैनल</a> <!-- ✅ अब ये जुड़ चुका है -->
 </nav>
+</nav>
 
+<!-- ✅ Bonus Popup yahan se -->
+<div id="bonusPopup" style="display:none; position:fixed; top:25px; left:50%; transform:translateX(-50%);
+background:#e0f7fa; border:2px solid #00796b; padding:20px 25px; z-index:9999;
+border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.15); font-size:18px; font-family:'Baloo 2', cursive; max-width:90%; text-align:center;">
+  🎉 केवल ₹100 में खेलें और पाएं ₹900 तक!<br><br>
+  यह एक <strong>विश्वासपात्र ऑनलाइन खाईवाल</strong> सेवा है।<br><br>
+  📲 <a href="https://wa.me/917014873689" style="color:#007bff; text-decoration:underline;">WhatsApp पर संपर्क करें</a> और तुरंत गेम लगाएं।
+</div>
+<!-- ✅ Bonus Popup yahan tak -->
+
+<div class="container">
 <div class="container">
 
   <div class="game-card">
@@ -165,18 +177,18 @@
   सभी अधिकार सुरक्षित © 2025 SATTA BAZAAR ONLINE
 </div>
 
-<a href="https://wa.me/917010387369" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #25D366;
-  color: white;
-  padding: 12px 18px;
-  font-size: 16px;
-  border-radius: 50px;
-  text-decoration: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  z-index: 9999;
+<a href="https://wa.me/917014873689" style="
+  position: fixed;  
+  bottom: 20px;  
+  right: 20px;  
+  background: #25D366;  
+  color: white;  
+  padding: 12px 18px;  
+  font-size: 16px;  
+  border-radius: 50px;  
+  text-decoration: none;  
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);  
+  z-index: 9999;  
 ">💬 WhatsApp</a>
 <script>
 window.onload = function () {
@@ -196,6 +208,22 @@ window.onload = function () {
   if (results.disawar) updateNumber("desawar", results.disawar);
   if (results.faridabad) updateNumber("faridabad", results.faridabad);
 };
+  <script>
+  window.addEventListener('load', () => {
+    const phone = localStorage.getItem("phone");
+    const lastSeen = localStorage.getItem("bonus_seen");
+
+    if (phone && (!lastSeen || (Date.now() - parseInt(lastSeen)) > 5 * 60 * 1000)) {
+      const box = document.getElementById("bonusPopup");
+      box.style.display = "block";
+
+      setTimeout(() => {
+        box.style.display = "none";
+        localStorage.setItem("bonus_seen", Date.now().toString());
+      }, 5 * 60 * 1000);
+    }
+  });
+</script>
 </script>
 </body>
 </html>
