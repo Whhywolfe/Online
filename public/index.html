@@ -86,7 +86,6 @@
   <a href="admin.html">🔐 एडमिन पैनल</a>
 </nav>
 
-<!-- 🔔 Premium Style Info Banner (Same Message) -->
 <div class="info-banner">
   📢 सत-प्रतिशत धोखा रहित वादा है! डिपॉज़िट करें और अनलिमिटेड पैसा जीतें 💸
   <a href="https://wa.me/917014873689?text=मुझे गेम खेलने की जानकारी चाहिए">WhatsApp पर जानकारी लें 📲</a>
@@ -109,8 +108,16 @@
 
 <script>
   const firebaseConfig = {
-    databaseURL: "https://your-project-id.firebaseio.com"
+    apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
+    authDomain: "satta-bazaar.firebaseapp.com",
+    databaseURL: "https://satta-bazaar-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "satta-bazaar",
+    storageBucket: "satta-bazaar.firebasestorage.app",
+    messagingSenderId: "765288695039",
+    appId: "1:765288695039:web:4280573e9493f2dbd478ca",
+    measurementId: "G-DLS91L8Q7Z"
   };
+
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
@@ -137,20 +144,22 @@
   });
 
   const isNew = (updatedAt) => {
-    const updatedTime = new Date(updatedAt);
-    const now = new Date();
-    const diffHours = (now - updatedTime) / (1000 * 60 * 60);
-    return diffHours <= 6;
+    const now = Date.now();
+    return updatedAt && (now - updatedAt <= 2 * 60 * 60 * 1000); // 2 घंटे तक NEW badge
   };
 
-  firebase.database().ref("gameResults").on("value", snapshot => {
+  db.ref("gameResults").on("value", snapshot => {
     const data = snapshot.val() || {};
     for (const slug in data) {
       const entry = data[slug];
       const el = document.getElementById(`${slug}-number`);
       if (el) {
-        const newTag = (entry.updatedAt && isNew(entry.updatedAt)) ? `<span class="new-badge">NEW</span>` : '';
-        el.innerHTML = `${entry.number || "---"} ${newTag}`;
+        if (typeof entry === 'string') {
+          el.textContent = entry;
+        } else {
+          const newTag = isNew(entry.updatedAt) ? `<span class="new-badge">NEW</span>` : '';
+          el.innerHTML = `${entry.number || "---"} ${newTag}`;
+        }
       }
     }
   });

@@ -111,7 +111,7 @@
 
   function login() {
     const pass = document.getElementById("adminPass").value;
-    if (pass === "Vishal@4820") {
+    if (pass === "Classico@4820") {
       document.getElementById("panel").style.display = "block";
       loadUPI();
       loadDeposits();
@@ -171,10 +171,17 @@
   function updateGameNumbers() {
     const inputs = document.querySelectorAll(".game-number");
     const result = {};
+    const timestamp = Date.now();
+
     inputs.forEach(input => {
       const slug = input.getAttribute("data-slug");
       const num = input.value.trim();
-      if (num) result[slug] = num;
+      if (num) {
+        result[slug] = {
+          number: num,
+          updatedAt: timestamp
+        };
+      }
     });
 
     if (Object.keys(result).length === 0) {
@@ -182,7 +189,7 @@
       return;
     }
 
-    db.ref("gameResults").set(result).then(() => {
+    db.ref("gameResults").update(result).then(() => {
       alert("✅ सभी गेम नंबर सेव हो गए");
     }).catch(err => {
       alert("❌ गेम नंबर सेव नहीं हो सके");
