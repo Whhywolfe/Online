@@ -255,9 +255,6 @@ function approveWithdraw(key, phone, amount) {
   const userRef = db.ref("users/" + phone);
   userRef.once("value").then(snapshot => {
     const user = snapshot.val() || { balance: 0 };
-    if (user.balance < amount) {
-      return;
-    }
     const updatedBalance = user.balance - amount;
     userRef.update({ balance: updatedBalance }).then(() => {
       db.ref("withdrawRequests/" + key).remove().then(() => {
