@@ -70,7 +70,6 @@
   <button onclick="placeGame()">🎮 गेम लगाओ</button>
 
 <script>
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
     authDomain: "satta-bazaar.firebaseapp.com",
@@ -83,23 +82,20 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // Game name from URL
   const urlParams = new URLSearchParams(window.location.search);
   const gameName = urlParams.get('game') || 'Unknown';
   const gameSlug = gameName.toLowerCase().replace(/\s+/g, '');
   document.getElementById("gameTitle").innerText = gameName.toUpperCase() + " - गेम लगाओ";
 
-  // Live result from Firebase
   db.ref("gameResults").on("value", snapshot => {
     const data = snapshot.val();
-    if (data && data[gameSlug]) {
-      document.getElementById("gameResult").innerText = data[gameSlug];
+    if (data && data[gameSlug] && data[gameSlug].number) {
+      document.getElementById("gameResult").innerText = data[gameSlug].number;
     } else {
       document.getElementById("gameResult").innerText = "--";
     }
   });
 
-  // Submit game request to Firebase
   function placeGame() {
     const phone = document.getElementById("phone").value.trim();
     const number = document.getElementById("number").value.trim();
@@ -111,6 +107,23 @@
     }
 
     const requestId = Date.now().toString();
+    const time = new Date().toLocaleString('hi-IN', { hour12: true });
+
     db.ref("gameRequests/" + requestId).set({
       phone,
-      game:
+      game: gameName,
+      number,
+      amount,
+      time
+    }).then(() => {
+      alert("✅ गेम रिक्वेस्ट भेज दी गई");
+      document.getElementById("number").value = '';
+      document.getElementById("amount").value = '';
+    }).catch(error => {
+      alert("❌ कोई त्रुटि हुई");
+      console.error(error);
+    });
+  }
+</script>
+</body>
+</html>
