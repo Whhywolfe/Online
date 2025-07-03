@@ -256,7 +256,6 @@ function approveWithdraw(key, phone, amount) {
   userRef.once("value").then(snapshot => {
     const user = snapshot.val() || { balance: 0 };
     if (user.balance < amount) {
-      alert("❌ इस यूज़र के पास पर्याप्त बैलेंस नहीं है");
       return;
     }
     const updatedBalance = user.balance - amount;
