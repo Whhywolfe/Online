@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SATTA BAZAAR ONLINE</title>
+
+  <!-- Premium Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #fffdf8;
+      color: #222;
+    }
+
+    /* GOLD TEXT EFFECT */
+    .gold-text {
+      background: linear-gradient(90deg, #ffda44, #ffb300, #ffda44);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(90deg, #1c1b19, #2a2825);
+      padding: 20px;
+      text-align: center;
+      font-size: 36px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* NAVIGATION */
+    nav {
+      background: #fff7ec;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      padding: 14px;
+      border-bottom: 1px solid #e2d4c3;
+      font-size: 17px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      text-decoration: none;
+      color: #a05a00;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #ff9800;
+    }
+    nav svg {
+      width: 20px;
+      height: 20px;
+      transition: filter 0.3s ease;
+    }
+    nav a:hover svg {
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+    }
+
+    /* SCROLL BANNER */
+    .info-banner {
+      background: linear-gradient(90deg,#7b2ff7,#4a00e0);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      padding: 14px 0;
+      border-radius: 8px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    }
+    .scroll-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollLeft 20s linear infinite;
+    }
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .container {
+      padding: 24px;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    /* GAME CARD */
+    .game-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      padding: 22px;
+      margin-bottom: 22px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    }
+    .game-title {
+      font-size: 26px;
+      margin-bottom: 12px;
+      font-family: 'Playfair Display', serif;
+      font-weight: bold;
+    }
+
+    .game-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    /* TIME BOX */
+    .game-schedule {
+      margin: 12px auto;
+      font-size: 15px;
+      color: #333;
+      background: linear-gradient(90deg,#fff7ea,#ffe7c2);
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .game-schedule span {
+      color: #d67b00;
+      font-weight: bold;
+    }
+
+    /* BUTTON */
+    .game-btn {
+      display: inline-block;
+      margin-top: 16px;
+      background: linear-gradient(90deg,#ff7e5f,#feb47b);
+      color: white;
+      padding: 12px 24px;
+      font-size: 17px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      transition: 0.3s ease;
+    }
+    .game-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    }
+
+    /* FOOTER */
+    .footer {
+      background-color: #fff3e6;
+      text-align: center;
+      padding: 20px;
+      font-size: 15px;
+      color: #444;
+      margin-top: 40px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* WhatsApp Button */
+    .whatsapp-btn {
+      position: fixed; bottom: 20px; right: 20px;
+      background: linear-gradient(90deg,#25D366,#128C7E);
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 9999;
+      transition: 0.3s ease;
+    }
+    .whatsapp-btn:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+      transform: scale(1.05);
+    }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<header>
+  <span class="gold-text">सट्टा बाजार ऑनलाइन</span>
+</header>
+
+<!-- NAVIGATION WITH GOLD ICONS -->
+<nav>
+  <a href="index.html">
+    <svg viewBox="0 0 24 24">
+      <defs>
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFD700"/>
+          <stop offset="100%" stop-color="#FFA500"/>
+        </linearGradient>
+      </defs>
+      <path d="M3 12L12 3l9 9v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9z" fill="url(#goldGradient)"/>
+    </svg>
+    Home
+  </a>
+
+  <a href="deposit.html">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 3v18m-6-6h12" stroke="url(#goldGradient)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Deposit
+  </a>
+
+  <a href="withdraw.html">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 21V3m6 6H6" stroke="url(#goldGradient)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Withdraw
+  </a>
+
+  <a href="terms.html">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 4h16v16H4zM8 8h8M8 12h6M8 16h4" stroke="url(#goldGradient)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Rules
+  </a>
+</nav>
+
+<div class="info-banner">
+  <div class="scroll-text">
+    भारत का सबसे भरोसेमंद और सुरक्षित ऑनलाइन बाज़ार | प्रीमियम गेम्स | फास्ट रिज़ल्ट | ट्रस्टेड प्लेटफ़ॉर्म | तुरंत पेमेंट की गारंटी | 
+    ⭐ जोड़ी रेट 10×950 | हारुफ़ रेट 100×950 | फिक्स गेम | फास्ट पेमेंट गारंटी ⭐
+  </div>
+</div>
+
+<div class="container" id="gameContainer">
+  <!-- गेम कार्ड JS से आएँगे -->
+</div>
+
+<div class="footer">
+  © 2025 SATTA BAZAAR ONLINE – सभी अधिकार सुरक्षित
+</div>
+
+<a href="https://wa.me/917014873689" class="whatsapp-btn">💬 WhatsApp</a>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
+    authDomain: "satta-bazaar.firebaseapp.com",
+    databaseURL: "https://satta-bazaar-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "satta-bazaar",
+    storageBucket: "satta-bazaar.appspot.com",
+    messagingSenderId: "765288695039",
+    appId: "1:765288695039:web:4280573e9493f2dbd478ca"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const gameList = [
+    { name: "DELHI BAZAAR", open: "11:00 AM", close: "12:00 PM" },
+    { name: "SHREE GANESH", open: "12:30 PM", close: "01:30 PM" },
+    { name: "MUMBAI BAZAAR", open: "01:00 PM", close: "02:00 PM" },
+    { name: "RAJASTHAN", open: "02:30 PM", close: "03:30 PM" },
+    { name: "DISAWAR", open: "03:00 PM", close: "04:00 PM" },
+    { name: "GALI", open: "04:30 PM", close: "05:30 PM" },
+    { name: "FARIDABAD", open: "05:00 PM", close: "06:00 PM" },
+    { name: "GHAZIABAD", open: "06:30 PM", close: "07:30 PM" },
+    { name: "KALYAN", open: "04:00 PM", close: "06:00 PM" },
+    { name: "KALYAN NIGHT", open: "09:00 PM", close: "11:00 PM" },
+    { name: "MAIN MUMBAI", open: "07:30 PM", close: "08:30 PM" },
+    { name: "MILAN DAY", open: "03:30 PM", close: "05:00 PM" },
+    { name: "MILAN NIGHT", open: "09:30 PM", close: "10:30 PM" },
+    { name: "RAJDHANI DAY", open: "01:00 PM", close: "02:00 PM" },
+    { name: "RAJDHANI NIGHT", open: "09:00 PM", close: "10:00 PM" },
+    { name: "TIME BAZAR", open: "01:30 PM", close: "02:30 PM" },
+    { name: "SRIDEVI", open: "11:30 AM", close: "12:30 PM" },
+    { name: "MADHUR DAY", open: "02:00 PM", close: "03:00 PM" },
+    { name: "MADHUR NIGHT", open: "08:30 PM", close: "09:30 PM" },
+    { name: "SUPREME DAY", open: "12:00 PM", close: "01:00 PM" },
+    { name: "SUPREME NIGHT", open: "10:00 PM", close: "11:00 PM" }
+  ];
+
+  const slugify = str => str.toLowerCase().replace(/\s+/g, '');
+
+  const container = document.getElementById('gameContainer');
+
+  gameList.forEach(game => {
+    const slug = slugify(game.name);
+    const gameDiv = document.createElement('div');
+    gameDiv.className = "game-card";
+
+    gameDiv.innerHTML = `
+      <div class="game-title gold-text">${game.name}</div>
+      <div class="game-number" id="${slug}-number">Loading...</div>
+      <div class="game-schedule">
+        Open: <span>${game.open}</span> | Close: <span>${game.close}</span>
+      </div>
+      <a href="game.html?game=${slug}" class="game-btn">Play Now</a>
+    `;
+    container.appendChild(gameDiv);
+  });
+
+  db.ref("gameResults").on("value", snapshot => {
+    const data = snapshot.val() || {};
+    for (const slug in data) {
+      const entry = data[slug];
+      const el = document.getElementById(`${slug}-number`);
+      if (el) {
+        el.textContent = typeof entry === 'string' ? entry : (entry.number || "---");
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
