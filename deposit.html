@@ -76,7 +76,7 @@
     db.ref("upiDetails").on("value", (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        document.getElementById("upiIdDisplay").textContent = data.id || "N/A";
+        document.getElementById("upiIdDisplay").textContent = data.upi || "N/A";
         document.getElementById("upiNumberDisplay").textContent = data.number || "N/A";
       } else {
         document.getElementById("upiIdDisplay").textContent = "Not Set";
