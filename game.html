@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Play Now - SATTA BAZAAR</title>
+
+  <!-- Premium Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fffdf8;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    /* HEADER TITLE */
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #ffda44, #ffb300, #ffda44);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      margin-bottom: 15px;
+    }
+
+    /* RESULT BOX */
+    .result-show {
+      margin-top: 15px;
+      font-size: 22px;
+      color: #a05a00;
+      font-weight: 600;
+    }
+    .result-show span {
+      font-size: 24px;
+      background: linear-gradient(90deg,#ffb300,#ff8c00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* INPUTS */
+    input {
+      padding: 14px;
+      width: 80%;
+      max-width: 420px;
+      margin: 12px auto;
+      border: 1.8px solid #e2d4c3;
+      border-radius: 10px;
+      display: block;
+      font-size: 16px;
+      background: #fffef9;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    }
+
+    /* PREMIUM BUTTON */
+    button {
+      padding: 14px 30px;
+      margin-top: 10px;
+      background: linear-gradient(90deg, #ffb300, #ff8c00);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #ff9800, #e67a00);
+    }
+
+    /* ✅ Message Style */
+    .msg-box {
+      display: none;
+      margin: 15px auto;
+      width: 80%;
+      max-width: 420px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 id="gameTitle">Play Now</h2>
+
+  <div class="result-show">
+    Current Result: <span id="gameResult">--</span>
+  </div>
+
+  <input type="text" id="phone" placeholder="Mobile Number">
+  <input type="text" id="number" placeholder="Number (e.g. 123)">
+  <input type="number" id="amount" placeholder="Amount ₹">
+  <button onclick="placeGame()">Play Now</button>
+
+  <!-- ✅ Status Message -->
+  <div id="msgBox" class="msg-box"></div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
+    authDomain: "satta-bazaar.firebaseapp.com",
+    databaseURL: "https://satta-bazaar-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "satta-bazaar",
+    storageBucket: "satta-bazaar.appspot.com",
+    messagingSenderId: "765288695039",
+    appId: "1:765288695039:web:4280573e9493f2dbd478ca"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const gameName = urlParams.get('game') || 'Unknown';
+  const gameSlug = gameName.toLowerCase().replace(/\s+/g, '');
+  document.getElementById("gameTitle").innerText = gameName.toUpperCase() + " - Play Now";
+
+  db.ref("gameResults").on("value", snapshot => {
+    const data = snapshot.val();
+    if (data && data[gameSlug] && data[gameSlug].number) {
+      document.getElementById("gameResult").innerText = data[gameSlug].number;
+    } else {
+      document.getElementById("gameResult").innerText = "--";
+    }
+  });
+
+  function placeGame() {
+    const phone = document.getElementById("phone").value.trim();
+    const number = document.getElementById("number").value.trim();
+    const amount = parseInt(document.getElementById("amount").value.trim());
+    const msgBox = document.getElementById("msgBox");
+
+    if (!phone || !number || isNaN(amount)) {
+      msgBox.style.display = "block";
+      msgBox.style.background = "#ffebee";
+      msgBox.style.color = "#c62828";
+      msgBox.style.borderLeft = "4px solid #e53935";
+      msgBox.textContent = "❗ Please fill all fields correctly";
+      return;
+    }
+
+    const requestId = Date.now().toString();
+    const time = new Date().toLocaleString('en-IN', { hour12: true });
+
+    db.ref("gameRequests/" + requestId).set({
+      phone,
+      game: gameName,
+      number,
+      amount,
+      time
+    }).then(() => {
+      msgBox.style.display = "block";
+      msgBox.style.background = "#e8f5e9";
+      msgBox.style.color = "#2e7d32";
+      msgBox.style.borderLeft = "4px solid #4caf50";
+      msgBox.textContent = "✅ Your Play request has been submitted successfully!";
+      
+      document.getElementById("number").value = '';
+      document.getElementById("amount").value = '';
+
+      setTimeout(() => { msgBox.style.display = "none"; }, 3000);
+    }).catch(error => {
+      msgBox.style.display = "block";
+      msgBox.style.background = "#ffebee";
+      msgBox.style.color = "#c62828";
+      msgBox.style.borderLeft = "4px solid #e53935";
+      msgBox.textContent = "❌ Error: " + error.message;
+    });
+  }
+</script>
+</body>
+</html>
