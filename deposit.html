@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>डिपॉज़िट</title>
+
+  <!-- Premium Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fffdf8;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* GOLD TEXT EFFECT */
+    .gold-text {
+      background: linear-gradient(90deg, #ffda44, #ffb300, #ffda44);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(90deg, #1c1b19, #2a2825);
+      padding: 20px;
+      text-align: center;
+      font-size: 32px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* NAVIGATION */
+    nav {
+      background: #fff7ec;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      padding: 14px;
+      border-bottom: 1px solid #e2d4c3;
+      font-size: 17px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      text-decoration: none;
+      color: #a05a00;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #ff9800;
+    }
+    nav svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* SCROLL BANNER */
+    .info-banner {
+      background: linear-gradient(90deg,#7b2ff7,#4a00e0);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      padding: 14px 0;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    }
+    .scroll-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollLeft 20s linear infinite;
+    }
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* UPI DISPLAY CARD */
+    .upi-display {
+      background: linear-gradient(135deg, #fff7e6, #ffedd5);
+      padding: 18px;
+      margin: 20px auto;
+      border-radius: 14px;
+      text-align: center;
+      max-width: 500px;
+      font-size: 18px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .upi-display strong {
+      color: #d67b00;
+    }
+
+    /* DEPOSIT FORM */
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    form h2 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      color: #a05a00;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      margin: 12px 0;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #ff9800;
+      box-shadow: 0 0 8px rgba(255, 152, 0, 0.3);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(90deg, #ff7e5f, #feb47b);
+      color: white;
+      transition: 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    .msg-box {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    /* FOOTER */
+    .footer {
+      background-color: #fff3e6;
+      text-align: center;
+      padding: 20px;
+      font-size: 15px;
+      color: #444;
+      margin-top: 40px;
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="gold-text">डिपॉज़िट सेक्शन</span>
+</header>
+
+<!-- NAVIGATION MENU -->
+<nav>
+  <a href="index.html">
+    <svg viewBox="0 0 24 24" fill="url(#goldGrad)"><path d="M12 3l9 8h-3v9H6v-9H3z"/></svg>
+    Home
+  </a>
+  <a href="deposit.html">
+    <svg viewBox="0 0 24 24" fill="url(#goldGrad)"><path d="M12 2l4 4h-3v7h-2V6H8z"/></svg>
+    Deposit
+  </a>
+  <a href="withdraw.html">
+    <svg viewBox="0 0 24 24" fill="url(#goldGrad)"><path d="M4 4h16v2H4zM4 10h16v2H4zM4 16h16v2H4z"/></svg>
+    Withdraw
+  </a>
+  <a href="terms.html">
+    <svg viewBox="0 0 24 24" fill="url(#goldGrad)"><path d="M6 4h12v2H6zm0 4h8v2H6zm0 4h12v2H6z"/></svg>
+    Rules
+  </a>
+
+  <!-- Gold Gradient -->
+  <svg width="0" height="0">
+    <defs>
+      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ffda00"/>
+        <stop offset="100%" stop-color="#ffb300"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</nav>
+
+<!-- SCROLLING BANNER -->
+<div class="info-banner">
+  <div class="scroll-text">
+    भारत का सबसे भरोसेमंद और सुरक्षित ऑनलाइन बाज़ार | प्रीमियम गेम्स | फास्ट रिज़ल्ट | ट्रस्टेड प्लेटफ़ॉर्म | तुरंत पेमेंट की गारंटी | ⭐ जोड़ी रेट 10×950 | हारुफ़ रेट 100×950 | फिक्स गेम | फास्ट पेमेंट गारंटी ⭐
+  </div>
+</div>
+
+<!-- UPI DETAILS CARD -->
+<div class="upi-display">
+  <p><strong>UPI ID:</strong> <span id="upiIdDisplay">लोड हो रहा है...</span></p>
+  <p><strong>UPI Number:</strong> <span id="upiNumberDisplay">लोड हो रहा है...</span></p>
+</div>
+
+<!-- DEPOSIT FORM -->
+<form id="depositForm">
+  <h2>💳 अपनी डिपॉज़िट डिटेल्स भरें</h2>
+  <input type="text" id="name" placeholder="👤 नाम" required />
+  <input type="text" id="phone" placeholder="📲 मोबाइल नंबर" required />
+  <input type="number" id="amount" placeholder="💰 ₹ राशि" required />
+  <input type="text" id="utr" placeholder="🔢 UTR नंबर" required />
+  <button type="submit"> जमा करें</button>
+  <div class="msg-box" id="formMessage"></div>
+</form>
+
+<div class="footer">
+  © 2025 SATTA BAZAAR ONLINE – सभी अधिकार सुरक्षित
+</div>
+
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
+    authDomain: "satta-bazaar.firebaseapp.com",
+    databaseURL: "https://satta-bazaar-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "satta-bazaar",
+    storageBucket: "satta-bazaar.appspot.com",
+    messagingSenderId: "765288695039",
+    appId: "1:765288695039:web:4280573e9493f2dbd478ca"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // Load UPI Details from Firebase
+  db.ref("upiDetails").on("value", (snapshot) => {
+    const data = snapshot.val();
+    document.getElementById("upiIdDisplay").textContent = data?.upi || "Not Set";
+    document.getElementById("upiNumberDisplay").textContent = data?.number || "Not Set";
+  });
+
+  // Deposit Form Submit
+  document.getElementById("depositForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const amount = document.getElementById("amount").value.trim();
+    const utr = document.getElementById("utr").value.trim();
+    const msgBox = document.getElementById("formMessage");
+
+    if (!name || !phone || !amount || !utr) {
+      msgBox.style.display = "block";
+      msgBox.style.background = "#ffebee";
+      msgBox.style.color = "#c62828";
+      msgBox.textContent = "❗ कृपया सभी फ़ील्ड भरें";
+      return;
+    }
+
+    const requestData = {
+      name,
+      phone,
+      amount,
+      utr,
+      timestamp: new Date().toISOString(),
+      status: "pending"
+    };
+
+    db.ref("depositRequests").push(requestData)
+      .then(() => {
+        msgBox.style.display = "block";
+        msgBox.style.background = "#e8f5e9";
+        msgBox.style.color = "#2e7d32";
+        msgBox.textContent = "✅ जमा रिक्वेस्ट सफलतापूर्वक भेज दी गई है!";
+        document.getElementById("depositForm").reset();
+        setTimeout(() => { msgBox.style.display = "none"; }, 4000);
+      })
+      .catch((error) => {
+        msgBox.style.display = "block";
+        msgBox.style.background = "#ffebee";
+        msgBox.style.color = "#c62828";
+        msgBox.textContent = "❌ त्रुटि: " + error.message;
+      });
+  });
+</script>
+
+</body>
+</html>
