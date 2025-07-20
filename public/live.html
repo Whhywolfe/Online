@@ -19,7 +19,10 @@
   </div>
 
   <script>
-    const games = ["DELHI BAZAAR","MUMBAI BAZAAR","RAJASTHAN","DESAWAR","GALI","FARIDABAD","GHAZIABAD"];
+    const games = ["DELHI BAZAAR", "SHREE GANESH", "MUMBAI BAZAAR", "RAJASTHAN", "DISAWAR", "GALI", "FARIDABAD", "GHAZIABAD",
+    "KALYAN", "KALYAN NIGHT", "MAIN MUMBAI", "MILAN DAY", "MILAN NIGHT", "RAJDHANI DAY",
+    "RAJDHANI NIGHT", "TIME BAZAR", "SRIDEVI", "MADHUR DAY", "MADHUR NIGHT",
+    "SUPREME DAY", "SUPREME NIGHT"];
     const container = document.getElementById("results");
     games.forEach(game => {
       const result = localStorage.getItem(`result_${game}`) || "---";
