@@ -97,33 +97,39 @@
   });
 
   function placeGame() {
-    const phone = document.getElementById("phone").value.trim();
-    const number = document.getElementById("number").value.trim();
-    const amount = parseInt(document.getElementById("amount").value.trim());
+  const phone = document.getElementById("phone").value.trim();
+  const number = document.getElementById("number").value.trim();
+  const amount = parseInt(document.getElementById("amount").value.trim());
+  const msgBox = document.getElementById("msgBox");
 
-    if (!phone || !number || isNaN(amount)) {
-      alert("कृपया सभी फ़ील्ड भरें");
-      return;
-    }
-
-    const requestId = Date.now().toString();
-    const time = new Date().toLocaleString('hi-IN', { hour12: true });
-
-    db.ref("gameRequests/" + requestId).set({
-      phone,
-      game: gameName,
-      number,
-      amount,
-      time
-    }).then(() => {
-      alert("✅ गेम रिक्वेस्ट भेज दी गई");
-      document.getElementById("number").value = '';
-      document.getElementById("amount").value = '';
-    }).catch(error => {
-      alert("❌ कोई त्रुटि हुई");
-      console.error(error);
-    });
+  if (!phone || !number || isNaN(amount)) {
+    msgBox.style.color = "red";
+    msgBox.textContent = "❗ कृपया सभी फ़ील्ड भरें";
+    return;
   }
+
+  const requestId = Date.now().toString();
+  const time = new Date().toLocaleString('hi-IN', { hour12: true });
+
+  db.ref("gameRequests/" + requestId).set({
+    phone,
+    game: gameName,
+    number,
+    amount,
+    time
+  }).then(() => {
+    msgBox.style.color = "green";
+    msgBox.textContent = "✅ गेम रिक्वेस्ट सफलतापूर्वक भेजी गई";
+    document.getElementById("number").value = '';
+    document.getElementById("amount").value = '';
+
+    // ✅ 3 सेकंड बाद मैसेज हट जाएगा
+    setTimeout(() => { msgBox.textContent = ""; }, 3000);
+  }).catch(error => {
+    msgBox.style.color = "red";
+    msgBox.textContent = "❌ कोई त्रुटि हुई: " + error.message;
+  });
+}
 </script>
 </body>
 </html>
