@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> एडमिन पैनल </title>
+
+  <!-- Premium Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fffdf8;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    /* GOLD HEADER */
+    header {
+      background: linear-gradient(90deg, #1c1b19, #2a2825);
+      padding: 20px;
+      text-align: center;
+      font-size: 32px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #ffda44;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h2, h3 {
+      font-family: 'Playfair Display', serif;
+      color: #a05a00;
+      margin-bottom: 15px;
+    }
+
+    input[type="text"], input[type="password"], input[type="number"], input[type="file"] {
+      padding: 12px;
+      width: 90%;
+      max-width: 400px;
+      margin: 10px auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      display: block;
+      font-size: 16px;
+      background: #fffef9;
+    }
+
+    button {
+      padding: 12px 25px;
+      margin-top: 12px;
+      background: linear-gradient(90deg, #ffb300, #ff8c00);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #ff9800, #e57c00);
+      transform: translateY(-1px);
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid #f1e1c8;
+      margin: 30px 0;
+    }
+
+    .request-box {
+      text-align: left;
+      background: #fff8e6;
+      padding: 12px 15px;
+      margin: 12px auto;
+      border-radius: 12px;
+      font-size: 16px;
+      border-left: 4px solid #ffb300;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    /* ✅ Message Style */
+    #adminMsg {
+      margin: 10px auto;
+      font-weight: 600;
+      font-size: 17px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+   एडमिन पैनल
+</header>
+
+<!-- LOGIN SECTION -->
+<div class="container" id="loginBox">
+  <h2>एडमिन लॉगिन</h2>
+  <input type="password" id="adminPass" placeholder="पासवर्ड">
+  <button onclick="login()">लॉगिन</button>
+  <div id="adminMsg"></div>
+</div>
+
+<!-- MAIN ADMIN PANEL -->
+<div class="container" id="panel" style="display:none;">
+
+  <!-- ✅ Global Message Box -->
+  <div id="adminMsg"></div>
+
+  <h3>UPI ID और मोबाइल नंबर अपडेट करें</h3>
+  <input type="text" id="upiId" placeholder="UPI ID">
+  <input type="text" id="upiNum" placeholder="मोबाइल नंबर">
+  <button onclick="updateUPI()">UPI सेव करें</button>
+
+  <!-- ✅ नया QR Upload Section -->
+  <h3>UPI QR Code अपडेट करें</h3>
+  <input type="file" id="qrUpload" accept="image/*">
+  <button onclick="uploadQR()">QR Code अपलोड करें</button>
+  <p id="qrStatus" style="color:green;font-weight:600;"></p>
+
+  <hr>
+
+  <h3>सभी गेम नंबर अपडेट करें</h3>
+  <div id="gameNumberList"></div>
+  <button onclick="updateGameNumbers()">गेम नंबर सेव करें</button>
+
+  <hr>
+
+  <h3>डिपॉज़िट रिक्वेस्ट्स</h3>
+  <div id="depositRequests">लोड हो रहा है...</div>
+
+  <hr>
+
+  <h3>निकासी रिक्वेस्ट्स</h3>
+  <div id="withdrawRequests">लोड हो रहा है...</div>
+
+  <hr>
+
+  <h3>गेम रिक्वेस्ट्स</h3>
+  <div id="gameRequests">लोड हो रहा है...</div>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCvQqLbN0NtpE4vAd7iPGYVguCnR3KmVQA",
+  authDomain: "satta-bazaar.firebaseapp.com",
+  databaseURL: "https://satta-bazaar-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "satta-bazaar",
+  storageBucket: "satta-bazaar.appspot.com",
+  messagingSenderId: "765288695039",
+  appId: "1:765288695039:web:4280573e9493f2dbd478ca"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const storage = firebase.storage();
+
+/* ✅ Helper function for inline messages */
+function showAdminMsg(text, type="success") {
+  const msg = document.getElementById("adminMsg");
+  msg.style.color = (type === "error") ? "red" : "green";
+  msg.textContent = text;
+  setTimeout(() => { msg.textContent = ""; }, 3000);
+}
+
+function login() {
+  const pass = document.getElementById("adminPass").value;
+  if (pass === "Classico@4820") {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("panel").style.display = "block";
+    loadUPI();
+    loadDeposits();
+    loadWithdrawals();
+    renderGameInputs();
+    loadGameRequests();
+  } else {
+    showAdminMsg("गलत पासवर्ड","error");
+  }
+}
+
+function updateUPI() {
+  const upi = document.getElementById("upiId").value.trim();
+  const number = document.getElementById("upiNum").value.trim();
+  if (!upi || !number) {
+    showAdminMsg("कृपया दोनों UPI ID और मोबाइल नंबर भरें","error");
+    return;
+  }
+  db.ref("upiDetails").update({ upi, number }).then(() => {
+    showAdminMsg("✅ UPI जानकारी सेव हो गई");
+  });
+}
+
+// ✅ QR Upload Function
+function uploadQR() {
+  const file = document.getElementById("qrUpload").files[0];
+  if (!file) {
+    showAdminMsg("❗ पहले कोई इमेज चुनें", "error");
+    return;
+  }
+
+  const qrRef = storage.ref("upiQR/" + file.name);
+  qrRef.put(file)
+    .then(() => qrRef.getDownloadURL())
+    .then((url) => {
+      return db.ref("upiDetails").update({ qr: url });
+    })
+    .then(() => {
+      document.getElementById("qrStatus").textContent = "✅ QR Code सफलतापूर्वक अपलोड हो गया!";
+      setTimeout(() => { document.getElementById("qrStatus").textContent = ""; }, 3000);
+    })
+    .catch((err) => {
+      showAdminMsg("❌ Error: " + err.message, "error");
+    });
+}
+
+function loadUPI() {
+  db.ref("upiDetails").on("value", snap => {
+    const data = snap.val();
+    if (data) {
+      document.getElementById("upiId").value = data.upi || '';
+      document.getElementById("upiNum").value = data.number || '';
+    }
+  });
+}
+
+const fullGameList = ["DELHI BAZAAR", "SHREE GANESH", "MUMBAI BAZAAR", "RAJASTHAN", "DISAWAR", "GALI", "FARIDABAD", "GHAZIABAD",
+    "KALYAN", "KALYAN NIGHT", "MAIN MUMBAI", "MILAN DAY", "MILAN NIGHT", "RAJDHANI DAY",
+    "RAJDHANI NIGHT", "TIME BAZAR", "SRIDEVI", "MADHUR DAY", "MADHUR NIGHT",
+    "SUPREME DAY", "SUPREME NIGHT"];
+
+function renderGameInputs() {
+  const container = document.getElementById("gameNumberList");
+  container.innerHTML = "";
+  fullGameList.forEach(name => {
+    const slug = name.toLowerCase().replace(/\s+/g, '');
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <input type="text" value="${name}" disabled style="background:#f9f4e6;" />
+      <input type="text" placeholder="नंबर" class="game-number" data-slug="${slug}" />
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateGameNumbers() {
+  const inputs = document.querySelectorAll(".game-number");
+  const result = {};
+  const timestamp = Date.now();
+  inputs.forEach(input => {
+    const slug = input.getAttribute("data-slug");
+    const num = input.value.trim();
+    if (num) {
+      result[slug] = {
+        number: num,
+        updatedAt: timestamp
+      };
+    }
+  });
+  if (Object.keys(result).length === 0) {
+    showAdminMsg("कृपया कम से कम एक गेम नंबर भरें","error");
+    return;
+  }
+  db.ref("gameResults").update(result).then(() => {
+    showAdminMsg("✅ सभी गेम नंबर सेव हो गए");
+  });
+}
+
+function loadDeposits() {
+  const container = document.getElementById("depositRequests");
+  db.ref("depositRequests").on("value", snapshot => {
+    const data = snapshot.val();
+    container.innerHTML = '';
+    if (data) {
+      Object.entries(data).forEach(([key, item]) => {
+        const div = document.createElement("div");
+        div.className = "request-box";
+        div.innerHTML = `
+          <strong>${item.name}</strong> ने ₹${item.amount} डिपॉज़िट किया<br>
+          फोन: ${item.phone}<br>
+          UTR: ${item.utr}<br>
+          <small>${item.time || ''}</small><br>
+          <button onclick="approveDeposit('${key}', '${item.phone}', ${item.amount})">Approve</button>
+        `;
+        container.appendChild(div);
+      });
+    } else {
+      container.innerHTML = "<i>कोई डिपॉज़िट रिक्वेस्ट नहीं है</i>";
+    }
+  });
+}
+
+function approveDeposit(key, phone, amount) {
+  const userRef = db.ref("users/" + phone);
+  userRef.once("value").then(snapshot => {
+    const user = snapshot.val() || { balance: 0 };
+    const updatedBalance = (user.balance || 0) + amount;
+    userRef.update({ balance: updatedBalance }).then(() => {
+      db.ref("depositRequests/" + key).remove().then(() => {
+        showAdminMsg("✅ डिपॉज़िट अप्रूव हो गया");
+      });
+    });
+  });
+}
+
+function loadWithdrawals() {
+  const container = document.getElementById("withdrawRequests");
+  db.ref("withdrawRequests").on("value", snapshot => {
+    const data = snapshot.val();
+    container.innerHTML = '';
+    if (data) {
+      Object.entries(data).forEach(([key, item]) => {
+        const div = document.createElement("div");
+        div.className = "request-box";
+        div.innerHTML = `
+          <strong>${item.name}</strong> ने ₹${item.amount} निकालने का अनुरोध किया<br>
+          फोन: ${item.phone}<br>
+          बैंक: ${item.bank}<br>
+          अकाउंट: ${item.account}<br>
+          IFSC: ${item.ifsc}<br>
+          <small>${item.time || ''}</small><br>
+          <button onclick="approveWithdraw('${key}', '${item.phone}', ${item.amount})">Approve</button>
+        `;
+        container.appendChild(div);
+      });
+    } else {
+      container.innerHTML = "<i>कोई निकासी रिक्वेस्ट नहीं है</i>";
+    }
+  });
+}
+
+function approveWithdraw(key, phone, amount) {
+  const userRef = db.ref("users/" + phone);
+  userRef.once("value").then(snapshot => {
+    const user = snapshot.val() || { balance: 0 };
+    const updatedBalance = user.balance - amount;
+    userRef.update({ balance: updatedBalance }).then(() => {
+      db.ref("withdrawRequests/" + key).remove().then(() => {
+        showAdminMsg("✅ निकासी अप्रूव हो गई");
+      });
+    });
+  });
+}
+
+function loadGameRequests() {
+  const container = document.getElementById("gameRequests");
+  db.ref("gameRequests").on("value", snapshot => {
+    const data = snapshot.val();
+    container.innerHTML = '';
+    if (data) {
+      Object.entries(data).reverse().forEach(([key, item]) => {
+        const div = document.createElement("div");
+        div.className = "request-box";
+        div.innerHTML = `
+          <strong>${item.game}</strong> | नंबर: ${item.number} | ₹${item.amount}<br>
+          फोन: ${item.phone}<br>
+          <button onclick="approveGameRequest('${key}')">Approve</button>
+        `;
+        container.appendChild(div);
+      });
+    } else {
+      container.innerHTML = "<i>कोई गेम रिक्वेस्ट नहीं है</i>";
+    }
+  });
+}
+
+function approveGameRequest(key) {
+  if (confirm("क्या आप इस रिक्वेस्ट को हटाना चाहते हैं?")) {
+    db.ref("gameRequests/" + key).remove().then(() => {
+      showAdminMsg("✅ गेम रिक्वेस्ट हटा दी गई");
+    });
+  }
+}
+</script>
+</body>
+</html>
